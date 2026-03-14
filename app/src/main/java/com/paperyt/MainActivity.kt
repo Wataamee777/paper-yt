@@ -231,7 +231,8 @@ private fun SettingsSection(settings: YtSettings, onSettingsChange: (YtSettings)
         value = settings.downloadDirectory,
         onValueChange = { onSettingsChange(settings.copy(downloadDirectory = it)) },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text("ダウンロード先ディレクトリ") }
+        label = { Text("ダウンロード先ディレクトリ") },
+        enabled = settings.customCommandEnabled
     )
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
