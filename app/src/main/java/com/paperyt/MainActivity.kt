@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.paperyt
 
 import android.content.ClipboardManager
