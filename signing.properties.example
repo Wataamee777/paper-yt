@@ -1,0 +1,6 @@
+# Copy this file to signing.properties for local release builds.
+# Never commit your real secrets.
+ANDROID_KEYSTORE_PATH=/absolute/path/to/release.jks
+ANDROID_KEYSTORE_PASSWORD=replace-me
+ANDROID_KEY_ALIAS=replace-me
+ANDROID_KEY_PASSWORD=replace-me
