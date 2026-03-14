@@ -33,6 +33,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
+import android.widget.Toast
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -47,12 +50,19 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import android.os.Build
+import android.content.Intent
+import com.paperyt.DownloadService
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+        }
         val repository = SettingsRepository(applicationContext)
         setContent {
             MaterialTheme {
@@ -78,6 +88,22 @@ class MainViewModel(private val repository: SettingsRepository) : ViewModel() {
         }
     }
 
+    fun runDownload(url: String, preset: DownloadPreset, context: Context) {
+    val fullCommand = buildCommand(url, preset)
+    val args = fullCommand.split(" ").filter { it != "yt-dlp" }.toTypedArray()
+    val dir = settings.value.downloadDirectory.ifBlank {
+        context.getExternalFilesDir(null)?.absolutePath ?: context.filesDir.absolutePath
+    }
+    val ffmpegPath = com.arthenica.ffmpegkit.FFmpegKitConfig.getFFmpegPath()
+
+    val intent = Intent(context, DownloadService::class.java).apply {
+        putExtra("url", url)
+        putExtra("args", args)
+        putExtra("dir", dir)
+        putExtra("ffmpegPath", ffmpegPath)
+    }
+    context.startForegroundService(intent) // サービス開始！
+}
     fun buildCommand(url: String, uiOption: DownloadPreset): String {
         val setting = settings.value
         val base = mutableListOf("yt-dlp")
@@ -167,7 +193,7 @@ fun PaperYtApp(vm: MainViewModel) {
                     commandPreview = vm.buildCommand(url, preset)
                 }) { Text("コマンド確認") }
                 Button(onClick = {
-                    commandPreview = "TODO: Termux連携 / ネイティブ実行基盤に接続"
+                    vm.runDownload(url, preset, context)
                 }) { Text("ダウンロード開始") }
             }
 
