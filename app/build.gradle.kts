@@ -14,8 +14,8 @@ android {
         applicationId = "com.paperyt"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
-        versionName = "Alpha 0.0.3.2"
+        versionCode = 6
+        versionName = "Alpha 0.0.3.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,13 +26,13 @@ android {
         }
     }
 
-    python {
+    // pythonブロックの記述を少し修正し、閉じカッコを補完しました
+    extensions.configure<com.chaquo.python.android.PythonExtension> {
         version = "3.11"
         pip {
             install("yt-dlp")
         }
-
-}
+    } // ← ここに閉じカッコが必要でした
 
     buildTypes {
         release {
@@ -45,7 +45,7 @@ android {
             if (keystorePath.isPresent) {
                 signingConfig = signingConfigs.create("releaseFromEnv") {
                     storeFile = file(keystorePath.get())
-                    storePassword = providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").orNull
+                    storePassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").orNull
                     keyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").orNull
                     keyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").orNull
                 }
@@ -60,7 +60,12 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
 
     buildFeatures {
@@ -82,6 +87,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("com.google.android.material:material:1.12.0")
+    // Note: FFmpeg Kitは環境によってChaquoと競合する場合があるため、ビルドエラーが出たら相談してください
     implementation("com.github.arthurhub:ffmpeg-kit:ffmpeg-kit-full:6.0")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
