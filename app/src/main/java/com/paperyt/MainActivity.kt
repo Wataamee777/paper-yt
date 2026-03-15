@@ -64,6 +64,10 @@ class MainActivity : ComponentActivity() {
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
         }
         val repository = SettingsRepository(applicationContext)
+        val vm: MainViewModel = ViewModelProvider(this, MainViewModel.factory(repository))[MainViewModel::class.java]
+
+        handleShareIntent(intent, vm)
+
         setContent {
             MaterialTheme {
                 val vm: MainViewModel = viewModel(
@@ -73,9 +77,39 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val vm: MainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        handleShareIntent(intent, vm)
+    }
+
+    private fun handleShareIntent(intent: Intent?, vm: MainViewModel) {
+
+    if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+
+        val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+
+        if (sharedText.contains("http")) {
+
+            vm.setSharedUrl(sharedText)
+
+        }
+
+    }
+
+
+}
+
 }
 
 class MainViewModel(private val repository: SettingsRepository) : ViewModel() {
+   var sharedUrl = mutableStateOf("")
+        private set
+
+    fun setSharedUrl(url: String) {
+        sharedUrl.value = url
+    }
+
     val settings: StateFlow<YtSettings> = repository.settings.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -140,8 +174,17 @@ fun PaperYtApp(vm: MainViewModel) {
     val context = LocalContext.current
 
     var url by rememberSaveable { mutableStateOf("") }
+    
     var preset by rememberSaveable { mutableStateOf(DownloadPreset.BEST_VIDEO_AUDIO) }
     var commandPreview by rememberSaveable { mutableStateOf("") }
+    
+    val externalUrl by vm.sharedUrl
+    LaunchedEffect(externalUrl) {
+        if (externalUrl.isNotBlank()) {
+            url = externalUrl
+            vm.setSharedUrl("")
+        }
+    }
 
     LaunchedEffect(Unit) {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
