@@ -14,8 +14,8 @@ android {
         applicationId = "com.paperyt"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "Alpha 0.0.3.1"
+        versionCode = 5
+        versionName = "Alpha 0.0.3.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -24,13 +24,15 @@ android {
         ndk {
             abiFilters("armeabi-v7a", "arm64-v8a", "x86_64")
         }
-        extensions.configure<com.chaquo.python.android.PythonExtension> {
-            version = "3.11"
-            pip {
-                install("yt-dlp")
-            }
-}
     }
+
+    python {
+        version = "3.11"
+        pip {
+            install("yt-dlp")
+        }
+
+}
 
     buildTypes {
         release {
