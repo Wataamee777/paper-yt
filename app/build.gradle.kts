@@ -14,8 +14,8 @@ android {
         applicationId = "com.paperyt"
         minSdk = 26
         targetSdk = 35
-        versionCode = 8
-        versionName = "Alpha 0.0.3.92"
+        versionCode = 9
+        versionName = "Alpha 0.0.3.93"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -37,7 +37,7 @@ chaquopy {
         getByName("py311") { version = "3.11" }
     }
     defaultConfig {
-        version = "3.11"
+        pyvariant = "3.11"
         pip {
             install("yt-dlp")
         }
