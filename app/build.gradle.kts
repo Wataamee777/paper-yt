@@ -27,14 +27,12 @@ android {
     // flavorDimensions は個別の要素をセットします
     flavorDimensions += "pyVersion"
     productFlavors {
-        create("py310") { dimension = "pyVersion" }
         create("py311") { dimension = "pyVersion" }
     }
 
     // 重要: chaquopy ブロックは android ブロックの「内側」に記述します
     chaquopy {
         productFlavors {
-            getByName("py310") { version = "3.10" }
             getByName("py311") { version = "3.11" }
         }
         defaultConfig {
