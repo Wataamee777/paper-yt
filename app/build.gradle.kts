@@ -14,8 +14,8 @@ android {
         applicationId = "com.paperyt"
         minSdk = 26
         targetSdk = 35
-        versionCode = 6
-        versionName = "Alpha 0.0.3.9"
+        versionCode = 7
+        versionName = "Alpha 0.0.3.91"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,13 +26,17 @@ android {
         }
     }
 
-    // pythonブロックの記述を少し修正し、閉じカッコを補完しました
-    extensions.configure<com.chaquo.python.android.PythonExtension> {
+chaquopy {
+    defaultConfig {
+        // ドキュメントの「Pythonバージョン」セクションの通り
         version = "3.11"
+        
+        // ドキュメントの「要件」セクションの通り
         pip {
             install("yt-dlp")
         }
-    } // ← ここに閉じカッコが必要でした
+    }
+    }
 
     buildTypes {
         release {
