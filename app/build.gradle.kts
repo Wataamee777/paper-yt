@@ -36,7 +36,7 @@ android {
             getByName("py311") { version = "3.11" }
         }
         defaultConfig {
-            // pyvariant は productFlavors と競合することがあるため、共通設定のみ記述
+            buildPython("python3")
             pip {
                 install("yt-dlp")
             }
