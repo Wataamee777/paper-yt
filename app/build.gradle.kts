@@ -96,7 +96,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("com.google.android.material:material:1.12.0")
     // FFmpeg Kit Full
-    implementation("com.github.arthurhub:ffmpeg-kit:ffmpeg-kit-full:6.0")
+    implementation("com.github.arthenica:ffmpeg-kit:v6.0.LTS")
     
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
