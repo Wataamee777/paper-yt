@@ -37,7 +37,6 @@ chaquopy {
         getByName("py311") { version = "3.11" }
     }
     defaultConfig {
-        pyvariant = "3.11"
         pip {
             install("yt-dlp")
         }
@@ -85,6 +84,7 @@ chaquopy {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            pickFirsts += "**/libc++_shared.so"
         }
     }
 }
