@@ -14,8 +14,8 @@ android {
         applicationId = "com.paperyt"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "Alpha 0.0.3.91"
+        versionCode = 8
+        versionName = "Alpha 0.0.3.92"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -24,14 +24,20 @@ android {
         ndk {
             abiFilters("armeabi-v7a", "arm64-v8a", "x86_64")
         }
+        flavorDimensions += "pyVersion"
+        productFlavors {
+            create("py310") { dimension = "pyVersion" }
+            create("py311") { dimension = "pyVersion" }
+    }
     }
 
 chaquopy {
+    productFlavors {
+        getByName("py310") { version = "3.10" }
+        getByName("py311") { version = "3.11" }
+    }
     defaultConfig {
-        // ドキュメントの「Pythonバージョン」セクションの通り
         version = "3.11"
-        
-        // ドキュメントの「要件」セクションの通り
         pip {
             install("yt-dlp")
         }
