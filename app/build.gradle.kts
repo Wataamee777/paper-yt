@@ -18,38 +18,37 @@ android {
         versionName = "Alpha 0.0.3.93"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        vectorDrawables { useSupportLibrary = true }
         ndk {
             abiFilters("armeabi-v7a", "arm64-v8a", "x86_64")
         }
-        flavorDimensions += "pyVersion"
-        productFlavors {
-            create("py310") { dimension = "pyVersion" }
-            create("py311") { dimension = "pyVersion" }
-    }
     }
 
-chaquopy {
+    // flavorDimensions は個別の要素をセットします
+    flavorDimensions += "pyVersion"
     productFlavors {
-        getByName("py310") { version = "3.10" }
-        getByName("py311") { version = "3.11" }
+        create("py310") { dimension = "pyVersion" }
+        create("py311") { dimension = "pyVersion" }
     }
-    defaultConfig {
-        pip {
-            install("yt-dlp")
+
+    // 重要: chaquopy ブロックは android ブロックの「内側」に記述します
+    chaquopy {
+        productFlavors {
+            getByName("py310") { version = "3.10" }
+            getByName("py311") { version = "3.11" }
         }
-    }
+        defaultConfig {
+            // pyvariant は productFlavors と競合することがあるため、共通設定のみ記述
+            pip {
+                install("yt-dlp")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             val keystorePath = providers.environmentVariable("ANDROID_KEYSTORE_PATH")
             if (keystorePath.isPresent) {
                 signingConfig = signingConfigs.create("releaseFromEnv") {
@@ -84,6 +83,7 @@ chaquopy {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // FFmpeg Kit との競合を回避するための必須設定
             pickFirsts += "**/libc++_shared.so"
         }
     }
@@ -97,8 +97,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("com.google.android.material:material:1.12.0")
-    // Note: FFmpeg Kitは環境によってChaquoと競合する場合があるため、ビルドエラーが出たら相談してください
+    // FFmpeg Kit Full
     implementation("com.github.arthurhub:ffmpeg-kit:ffmpeg-kit-full:6.0")
+    
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.3.1")
@@ -110,7 +111,6 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
